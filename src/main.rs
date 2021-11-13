@@ -33,6 +33,7 @@ mod year2015 {
             (1, 1) => day1::part1(input_file_path),
             (1, 2) => day1::part2(input_file_path),
             (6, 1) => day6::part1(input_file_path),
+            (6, 2) => day6::part2(input_file_path),
             _ => {
                 eprintln!(
                     "Solution to 2015 day {} part {} not yet implemented.",
@@ -115,6 +116,26 @@ mod year2015 {
             // Count the lights switched on.
             let on_count = count_lights_on(&lights);
             println!("{}", on_count);
+        }
+
+        /// Set the brightness of matrix of lights depending on
+        /// instructions in the input file, and then calculate
+        /// total brightness of all lights.
+        pub fn part2(input_file_path: &str) {
+            let instructions = read_lines(input_file_path);
+            let mut lights: Grid<u32> =
+                Grid::new(1000, 1000, 0);
+            // Execute the instructions in the file.
+            for instruction in instructions {
+                match parse_instruction(&instruction) {
+                    Command::Toggle(from, to) => brighten_lights(&mut lights, from, to, 2),
+                    Command::TurnOn(from, to) => brighten_lights(&mut lights, from, to, 1),
+                    Command::TurnOff(from, to) => dim_lights(&mut lights, from, to, 1),
+                }
+            }
+            // Count the lights switched on.
+            let total_brightness = sum_total_brightness(&lights);
+            println!("{}", total_brightness);
         }
 
         // Set up regex as static so it's not recompiled every
@@ -205,6 +226,26 @@ mod year2015 {
             }
         }
 
+        /// Given a range of coordinates into the light matrix,
+        /// make those lights brighter by the given amount.
+        fn brighten_lights(grid: &mut Grid<u32>, start: Coord, end: Coord, amount: u32) {
+            for x in start.x .. end.x+1 {
+                for y in start.y .. end.y+1 {
+                    grid.set(x, y, grid.get(x, y).saturating_add(amount));
+                }
+            }
+        }
+
+        /// Given a range of coordinates into the light matrix,
+        /// make those lights dimmer by the given amount.
+        fn dim_lights(grid: &mut Grid<u32>, start: Coord, end: Coord, amount: u32) {
+            for x in start.x .. end.x+1 {
+                for y in start.y .. end.y+1 {
+                    grid.set(x, y, grid.get(x, y).saturating_sub(amount));
+                }
+            }
+        }
+
         /// Count how many lights are on in the given light matrix.
         fn count_lights_on(grid: &Grid<bool>) -> u32 {
             let mut count: u32 = 0;
@@ -214,6 +255,15 @@ mod year2015 {
                 }
             }
             return count;
+        }
+
+        /// Calculate the total brightness of all the lights in the matrix.
+        fn sum_total_brightness(grid: &Grid<u32>) -> u32 {
+            let mut total: u32 = 0;
+            for light in grid {
+                total += *light;
+            }
+            return total;
         }
     }
 }
