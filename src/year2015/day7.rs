@@ -9,12 +9,30 @@ pub fn part1(input_file_path: &str) {
     for conn_str in conn_strs {
         conns.push(parse_connection(conn_str));
     }
-    let resolved_signals = resolve_connections(&conns);
+    let resolved_signals = resolve_connections(&conns, None);
     println!("{}", resolved_signals["a"]);
 }
 
-fn resolve_connections(conns: &Vec<Connection>) -> HashMap<String, u16> {
+pub fn part2(input_file_path: &str) {
+    let conn_strs = read_lines(input_file_path);
+    let mut conns = Vec::with_capacity(conn_strs.len());
+    for conn_str in conn_strs {
+        conns.push(parse_connection(conn_str));
+    }
+    let resolved_signals = resolve_connections(&conns, None);
+    let a = resolved_signals["a"];
+    let reresolved_signals = resolve_connections(&conns, Some(a));
+    println!("{}", reresolved_signals["a"]);
+}
+
+fn resolve_connections(conns: &Vec<Connection>, b_override: Option<u16>) -> HashMap<String, u16> {
     let mut resolved_signals = HashMap::new();
+    match b_override {
+        Some(val) => {
+            resolved_signals.insert("b".to_string(), val);
+        },
+        None => ()
+    };
     let mut modified_this_pass = true;
     while modified_this_pass {
         modified_this_pass = false;
@@ -28,7 +46,7 @@ fn resolve_connections(conns: &Vec<Connection>) -> HashMap<String, u16> {
                                 modified_this_pass = true;
                             }
                         },
-                        _ => {}
+                        _ => ()
                     }
                 },
                 LogicExpression::NotGate(e) => {
@@ -39,7 +57,7 @@ fn resolve_connections(conns: &Vec<Connection>) -> HashMap<String, u16> {
                                 modified_this_pass = true;
                             }
                         },
-                        _ => {}
+                        _ => ()
                     }
                 },
                 LogicExpression::AndGate(e1, e2) => {
@@ -52,7 +70,7 @@ fn resolve_connections(conns: &Vec<Connection>) -> HashMap<String, u16> {
                                 modified_this_pass = true;
                             }
                         },
-                        _ => {}
+                        _ => ()
                     }
                 },
                 LogicExpression::OrGate(e1, e2) => {
@@ -65,7 +83,7 @@ fn resolve_connections(conns: &Vec<Connection>) -> HashMap<String, u16> {
                                 modified_this_pass = true;
                             }
                         },
-                        _ => {}
+                        _ => ()
                     }
                 },
                 LogicExpression::LShift(e1, e2) => {
@@ -78,7 +96,7 @@ fn resolve_connections(conns: &Vec<Connection>) -> HashMap<String, u16> {
                                 modified_this_pass = true;
                             }
                         },
-                        _ => {}
+                        _ => ()
                     }
                 },
                 LogicExpression::RShift(e1, e2) => {
@@ -91,7 +109,7 @@ fn resolve_connections(conns: &Vec<Connection>) -> HashMap<String, u16> {
                                 modified_this_pass = true;
                             }
                         },
-                        _ => {}
+                        _ => ()
                     }
                 },
             }
