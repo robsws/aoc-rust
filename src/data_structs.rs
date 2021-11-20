@@ -3,8 +3,10 @@ pub struct Coord {
     pub y: usize
 }
 
+#[derive(Clone)]
 pub struct Grid<T: Clone> {
-    xsize: usize,
+    pub xsize: usize,
+    pub ysize: usize,
     elements: Vec<T>
 }
 
@@ -17,7 +19,7 @@ impl<'a, T: Clone> Grid<T> {
         fill_with: T
     ) -> Grid<T> {
         let elements = vec![fill_with; xsize * ysize];
-        Grid{xsize, elements}
+        Grid{xsize, ysize, elements}
     }
 
     /// Read the element at x,y in the grid
