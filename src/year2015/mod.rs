@@ -24,6 +24,7 @@ pub fn solve(day: u8, part: u8, input_file_path: &str) {
         (16, 1) => day16::part1(input_file_path),
         (16, 2) => day16::part2(input_file_path),
         (17, 1) => day17::part1(input_file_path),
+        (17, 2) => day17::part2(input_file_path),
         _ => {
             eprintln!(
                 "Solution to 2015 day {} part {} not yet implemented.",
