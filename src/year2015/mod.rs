@@ -1,5 +1,5 @@
 mod day1; mod day6; mod day7; mod day8;
-mod day12; mod day13; mod day14; mod day15; mod day16; mod day17; mod day18;
+mod day12; mod day13; mod day14; mod day15; mod day16; mod day17; mod day18; mod day19;
 
 /// Dispatch the correct function given the day and part
 /// given.
@@ -27,6 +27,7 @@ pub fn solve(day: u8, part: u8, input_file_path: &str) {
         (17, 2) => day17::part2(input_file_path),
         (18, 1) => day18::part1(input_file_path),
         (18, 2) => day18::part2(input_file_path),
+        (19, 1) => day19::part1(input_file_path),
         _ => {
             eprintln!(
                 "Solution to 2015 day {} part {} not yet implemented.",
