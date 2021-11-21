@@ -7,13 +7,21 @@ use crate::input_file::read_lines;
 
 pub fn part1(input_file_path: &str) {
     let lines = read_lines(input_file_path);
-    let (molecule, replacements) = parse_lines(&lines);
-    let resulting_molecules = count_distinct_replacements(&molecule, &replacements);
-    println!("{}", resulting_molecules);
+    let (molecule, replacements, _) = parse_lines(&lines);
+    let count = count_distinct_replacements(&molecule, &replacements);
+    println!("{}", count);
 }
 
-fn parse_lines(lines: &Vec<String>) -> (String, HashMap<String, Vec<String>>) {
+pub fn part2(input_file_path: &str) {
+    let lines = read_lines(input_file_path);
+    let (molecule, _, reductions) = parse_lines(&lines);
+    let count = count_reductions_to_e(&molecule, &reductions);
+    println!("{}", count);
+}
+
+fn parse_lines(lines: &Vec<String>) -> (String, HashMap<String, Vec<String>>, Vec<(String, String)>) {
     let mut replacements = HashMap::<String, Vec<String>>::new();
+    let mut reductions = Vec::<(String, String)>::new();
     let mut read_all_replacements = false;
     let mut molecule: String = String::new();
     for line in lines {
@@ -29,6 +37,7 @@ fn parse_lines(lines: &Vec<String>) -> (String, HashMap<String, Vec<String>>) {
         if parts.len() != 2 {
             panic!("Invalid syntax in replacement line.");
         }
+        reductions.push((parts[1].to_string(), parts[0].to_string()));
         let entry = replacements.get_mut(parts[0]);
         match entry {
             None => {
@@ -37,7 +46,8 @@ fn parse_lines(lines: &Vec<String>) -> (String, HashMap<String, Vec<String>>) {
             Some(v) => v.push(parts[1].to_string()),
         }
     }
-    (molecule, replacements)
+    reductions.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
+    (molecule, replacements, reductions)
 }
 
 fn count_distinct_replacements(molecule: &str, replacements: &HashMap<String, Vec<String>>) -> usize {
@@ -80,4 +90,19 @@ fn count_distinct_replacements(molecule: &str, replacements: &HashMap<String, Ve
         }
     }
     resulting_molecules.len()
+}
+
+fn count_reductions_to_e(start_molecule: &str, reductions: &Vec<(String, String)>) -> usize {
+    let mut molecule = start_molecule.to_string();
+    let mut reduction_count = 0;
+    while molecule != "e" {
+        for (pattern, result) in reductions {
+            if molecule.contains(pattern) {
+                molecule = molecule.replacen(pattern, result, 1);
+                reduction_count += 1;
+                break;
+            }
+        }
+    }
+    reduction_count
 }
