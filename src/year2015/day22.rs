@@ -8,7 +8,20 @@ pub fn part1(input_file_path: &str) {
     let lines = read_lines(input_file_path);
     let boss = parse_lines(lines);
     let player = Wizard { health: 50, mana: 500, armour: 0 };
-    let game = Game::new(player, boss);
+    let game = Game::new(player, boss, false);
+    let best_game = find_least_mana_win(&game).unwrap();
+    println!("Mana spent: {}", best_game.mana_spent);
+    println!("Spells cast:");
+    for spell in best_game.spells_cast {
+        println!(" -> {}", spell);
+    }
+}
+
+pub fn part2(input_file_path: &str) {
+    let lines = read_lines(input_file_path);
+    let boss = parse_lines(lines);
+    let player = Wizard { health: 50, mana: 500, armour: 0 };
+    let game = Game::new(player, boss, true);
     let best_game = find_least_mana_win(&game).unwrap();
     println!("Mana spent: {}", best_game.mana_spent);
     println!("Spells cast:");
@@ -31,7 +44,6 @@ fn parse_lines(lines: Vec<String>) -> Boss {
 }
 
 fn find_least_mana_win(game: &Game) -> Option<Game> {
-    // Set up the worst possible game as the one to beat
     let mut best_game: Option<Game> = None;
     // Iterate through each available spell to cast and try casting it.
     for spell in game.possible_spells() {
@@ -104,11 +116,12 @@ struct Game {
     poison_effect_remaining: i32,
     recharge_effect_remaining: i32,
     mana_spent: i32,
-    spells_cast: Vec<Spell>
+    spells_cast: Vec<Spell>,
+    hard_mode: bool
 }
 
 impl Game {
-    fn new(player: Wizard, boss: Boss) -> Game {
+    fn new(player: Wizard, boss: Boss, hard_mode: bool) -> Game {
         Game {
             player,
             boss,
@@ -116,13 +129,23 @@ impl Game {
             poison_effect_remaining: 0,
             recharge_effect_remaining: 0,
             mana_spent: 0,
-            spells_cast: vec![]
+            spells_cast: vec![],
+            hard_mode
         }
     }
 
     pub fn player_turn(&mut self, spell_to_cast: Spell) -> GameEndState {
         self.player.armour = 0;
+        if self.hard_mode {
+            self.player.health -= 1;
+            if self.player.health <= 0 {
+                return GameEndState::BossWon;
+            }
+        }
         self.apply_effects();
+        if self.boss.health <= 0 {
+            return GameEndState::WizardWon;
+        }
         self.player.mana -= spell_to_cast.cost();
         self.mana_spent += spell_to_cast.cost();
         match spell_to_cast {
@@ -138,6 +161,9 @@ impl Game {
     pub fn boss_turn(&mut self) -> GameEndState {
         self.player.armour = 0;
         self.apply_effects();
+        if self.boss.health <= 0 {
+            return GameEndState::WizardWon;
+        }
         self.player.health -= max(self.boss.damage - self.player.armour, 1);
         self.get_game_end_state()
     }
@@ -145,16 +171,20 @@ impl Game {
     pub fn possible_spells(&self) -> Vec<Spell> {
         let mut spells = Vec::<Spell>::with_capacity(5);
         spells.push(Spell::MagicMissile);
-        if self.player.mana > Spell::Drain.cost() {
+        let mut mana_available = self.player.mana;
+        if self.recharge_effect_remaining > 0 {
+            mana_available += 101;
+        }
+        if mana_available >= Spell::Drain.cost() {
             spells.push(Spell::Drain);
         }
-        if self.player.mana > Spell::Shield.cost() && self.shield_effect_remaining == 0 {
+        if mana_available >= Spell::Shield.cost() && self.shield_effect_remaining <= 1 {
             spells.push(Spell::Shield);
         }
-        if self.player.mana > Spell::Poison.cost() && self.poison_effect_remaining == 0 {
+        if mana_available >= Spell::Poison.cost() && self.poison_effect_remaining <= 1 {
             spells.push(Spell::Poison);
         }
-        if self.player.mana > Spell::Recharge.cost() && self.recharge_effect_remaining == 0 {
+        if mana_available >= Spell::Recharge.cost() && self.recharge_effect_remaining <= 1 {
             spells.push(Spell::Recharge);
         }
         spells
@@ -209,13 +239,14 @@ impl Game {
     }
 
     fn get_game_end_state(&self) -> GameEndState {
-        if self.boss.health < -100 || self.player.health < -100 {
-            println!("bad");
+        let mut mana_available = self.player.mana;
+        if self.recharge_effect_remaining > 0 {
+            mana_available += 101;
         }
         if self.boss.health <= 0 {
             GameEndState::WizardWon
         }
-        else if self.player.mana < Spell::MagicMissile.cost() || self.player.health <= 0 {
+        else if mana_available < Spell::MagicMissile.cost() || self.player.health <= 0 {
             GameEndState::BossWon
         }
         else {
@@ -224,7 +255,7 @@ impl Game {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 enum Spell {
     MagicMissile,
     Drain,
