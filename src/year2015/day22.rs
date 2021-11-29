@@ -31,72 +31,56 @@ fn parse_lines(lines: Vec<String>) -> Boss {
 }
 
 fn find_least_mana_win(game: &Game) -> Option<Game> {
-    // println!(
-    //     "{} {} {} {} {:?}",
-    //     game.spells_cast.len(),
-    //     game.player.mana,
-    //     game.player.health,
-    //     game.boss.health,
-    //     game.spells_cast.last()
-    // );
     // Set up the worst possible game as the one to beat
     let mut best_game: Option<Game> = None;
     // Iterate through each available spell to cast and try casting it.
     for spell in game.possible_spells() {
         let mut game_next = game.clone();
         game_next.spells_cast.push(spell);
+        // Take the player's turn
         let end_state = game_next.player_turn(spell);
+        // Check if the game is over after the player's turn
         match end_state {
             GameEndState::Ongoing => (),
             GameEndState::BossWon => continue,
             GameEndState::WizardWon => {
-                match best_game {
-                    None => {
-                        best_game = Some(game_next.clone());
-                    },
-                    Some(ref g) => {
-                        if game_next.mana_spent < g.mana_spent {
-                            best_game = Some(game_next.clone());
-                        }
-                    }
-                }
+                best_game = compare_games(best_game, Some(game_next.clone()));
                 continue;
             }
         }
+        // Take the boss's turn
         let end_state = game_next.boss_turn();
+        // Check if the game is over
         match end_state {
             GameEndState::Ongoing => (),
             GameEndState::BossWon => continue,
             GameEndState::WizardWon => {
-                match best_game {
-                    None => {
-                        best_game = Some(game_next.clone());
-                    },
-                    Some(ref g) => {
-                        if game_next.mana_spent < g.mana_spent {
-                            best_game = Some(game_next.clone());
-                        }
-                    }
-                }
+                best_game = compare_games(best_game, Some(game_next.clone()));
                 continue;
             }
         }
         // If the battle is still going, recurse.
         let best_game_next = find_least_mana_win(&game_next);
-        best_game = match (best_game, best_game_next) {
-            (None, None) => None,
-            (Some(g), None) => Some(g),
-            (None, Some(ng)) => Some(ng),
-            (Some(g), Some(ng)) => {
-                if ng.mana_spent < g.mana_spent {
-                    Some(ng)
-                } else {
-                    Some(g)
-                }
+        // Update the best game if one was found that uses less mana
+        best_game = compare_games(best_game, best_game_next);
+    }
+    best_game
+}
+
+/// Get the game from the two that uses less mana
+fn compare_games(game1: Option<Game>, game2: Option<Game>) -> Option<Game> {
+    match (game1, game2) {
+        (None, None) => None,
+        (Some(g1), None) => Some(g1),
+        (None, Some(g2)) => Some(g2),
+        (Some(g1), Some(g2)) => {
+            if g2.mana_spent < g1.mana_spent {
+                Some(g2)
+            } else {
+                Some(g1)
             }
         }
     }
-    best_game
 }
 
 #[derive(Clone)]
