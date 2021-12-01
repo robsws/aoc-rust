@@ -1,6 +1,6 @@
 use std::env;
 
-mod year2015;
+mod year2015; mod year2021;
 mod input_file;
 mod data_structs;
 
@@ -20,9 +20,8 @@ fn main() {
     let input_file_path = &args[4];
 
     match year {
-        2015 => {
-            year2015::solve(day, part, input_file_path);
-        },
+        2015 => year2015::solve(day, part, input_file_path),
+        2021 => year2021::solve(day, part, input_file_path),
         _ => {
             eprintln!("Solutions to year {} not yet implemented.", year);
         }
