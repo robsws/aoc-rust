@@ -1,5 +1,5 @@
 mod day8;  mod day19; mod day16; 
-mod day12; mod day20; mod day15;  
+mod day12; mod day20; mod day15; mod day24;
 mod day21; mod day23; mod day14; mod day17; mod day13;
 mod day6;  mod day18; mod day7;  mod day1;  mod day22;
 
@@ -39,6 +39,8 @@ pub fn solve(day: u8, part: u8, input_file_path: &str) {
         (22, 2) => day22::part2(input_file_path),
         (23, 1) => day23::part1(input_file_path),
         (23, 2) => day23::part2(input_file_path),
+        (24, 1) => day24::part1(input_file_path),
+        (24, 2) => day24::part2(input_file_path),
         _ => {
             eprintln!(
                 "Solution to 2015 day {} part {} not yet implemented.",
