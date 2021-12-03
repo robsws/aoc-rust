@@ -1,5 +1,3 @@
-use core::panic;
-
 use crate::input_file::read_lines;
 
 pub fn part1(input_file_path: &str) {
