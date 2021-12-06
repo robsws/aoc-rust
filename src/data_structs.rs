@@ -22,6 +22,16 @@ impl<'a, T: Clone> Grid<T> {
         Grid{xsize, ysize, elements}
     }
 
+    /// Create a new grid of size xsize x ysize
+    /// with the given elements
+    pub fn with_elements(
+        xsize: usize,
+        ysize: usize,
+        elements: Vec<T>
+    ) -> Grid<T> {
+        Grid{xsize, ysize, elements}
+    }
+
     /// Read the element at x,y in the grid
     pub fn get(
         &self,
@@ -31,6 +41,18 @@ impl<'a, T: Clone> Grid<T> {
         self.check_bounds(x, y);
         let index = self.calc_index(x, y);
         return &self.elements[index];
+    }
+
+    /// Read the element at x,y in the grid
+    /// and return a mutable reference
+    pub fn get_mut(
+        &mut self,
+        x: usize,
+        y: usize
+    ) -> &mut T {
+        self.check_bounds(x, y);
+        let index = self.calc_index(x, y);
+        return &mut self.elements[index];
     }
 
     /// Set the element at x,y to the given value
@@ -52,7 +74,7 @@ impl<'a, T: Clone> Grid<T> {
         x: usize,
         y: usize
     ) {
-        if x * y > self.elements.len() {
+        if x >= self.xsize || y >= self.ysize {
             panic!("Index {},{} out of bounds of grid.", x, y);
         }
     }
