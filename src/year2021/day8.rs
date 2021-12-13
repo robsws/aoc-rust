@@ -19,12 +19,13 @@ pub fn part1(input_file_path: &str) {
 pub fn part2(input_file_path: &str) {
     let lines = read_lines(input_file_path);
     let displays = parse_lines(lines);
-    let mut mapping = WireMappingTable::new();
-    let mut modified = true;
     let mut total = 0;
     for display in displays {
+        let mut mapping = WireMappingTable::new();
         // Deduce wire mappings
+        let mut modified = true;
         while modified {
+            modified = false;
             for digit in &display.0 {
                 modified |= mapping.update(digit)
             }
@@ -132,7 +133,13 @@ mod wire_mapping {
         }
 
         fn handle_simple_digit(&mut self, digit: &str) -> bool {
-            let segments = &DIGIT_SEGMENTS[digit.len()];
+            let digit_index = match digit.len() {
+                2 => 1,
+                3 => 7,
+                4 => 4,
+                _ => panic!("Not a simple digit.")
+            };
+            let segments = &DIGIT_SEGMENTS[digit_index];
             let inputs: Vec<char> = digit.chars().collect();
             let mut modified = false;
             for wire in WIRES.iter() {
@@ -144,7 +151,7 @@ mod wire_mapping {
                     );
                 } else {
                     // rule out segments as outputs for all other inputs
-                    modified |= self.rule_out_for_output(
+                    modified |= self.rule_out_for_input(
                         *wire, 
                         segments
                     );
@@ -227,6 +234,7 @@ mod wire_mapping {
             }
         }
 
+        /// Rule out all the outputs given for a particular input
         fn rule_out_for_input(&mut self, input: char, outputs: &Vec<char>) -> bool {
             let record = self.table.get_mut(&input).unwrap();
             let mut modified = false;
@@ -236,6 +244,7 @@ mod wire_mapping {
             modified
         }
 
+        /// Rule out one output for all inputs given
         fn rule_out_for_output(&mut self, output: char, inputs: &Vec<char>) -> bool {
             let mut modified = false;
             for input in inputs {
