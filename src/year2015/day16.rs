@@ -68,7 +68,7 @@ fn parse_lines(lines: &Vec<String>) -> Vec<HashMap<String, u32>> {
 fn match_sue(sues: Vec<HashMap<String, u32>>, inequalities: bool) -> Option<usize> {
     for (i, sue) in sues.into_iter().enumerate() {
         let mut is_match = true;
-        for (key, value) in TARGET_SUE.into_iter() {
+        for (key, value) in TARGET_SUE.iter() {
             let keystr = *key;
             match sue.get(keystr) {
                 None => (),
