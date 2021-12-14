@@ -19,7 +19,7 @@
                     "kind": "bin"
                 }
             },
-            "args": ["2021", "10", "2", "input/2021/10.txt"],
+            "args": ["2021", "11", "2", "input/2021/11.txt"],
             "cwd": "${workspaceFolder}"
         },
         {
