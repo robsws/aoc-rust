@@ -1,3 +1,7 @@
+use std::hash::Hash;
+
+use priority_queue::PriorityQueue;
+
 #[derive(Clone, Eq, Hash, PartialEq)]
 pub struct Coord {
     pub x: usize,
@@ -124,3 +128,38 @@ impl<'a, T> Iterator for GridIterator<'a, T> {
         }
     }
 }
+
+pub struct MinPriorityQueue<T: Hash + Eq> {
+    queue: PriorityQueue<T, u32>
+}
+
+impl<T: Hash + Eq> MinPriorityQueue<T> {
+    pub fn new() -> MinPriorityQueue<T> {
+        MinPriorityQueue {
+            queue: PriorityQueue::new()
+        }
+    }
+
+    pub fn pop(&mut self) -> Option<(T, u32)> {
+        match self.queue.pop() {
+            None => None,
+            Some((t, p)) => Some((t, u32::MAX - p))
+        }
+    }
+
+    pub fn push(&mut self, item: T, priority: u32) {
+        self.queue.push(item, u32::MAX - priority);
+    }
+
+    pub fn get(&self, item: &T) -> Option<(&T, u32)> {
+        match self.queue.get(item) {
+            None => None,
+            Some((t, p)) => Some((t, u32::MAX - p))
+        }
+    }
+
+    pub fn change_priority(&mut self, item: &T, new_priority: u32) {
+        self.queue.change_priority(item, u32::MAX - new_priority);
+    }
+}
+
