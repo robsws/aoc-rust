@@ -1,5 +1,3 @@
-use std::cmp::max;
-
 use crate::{input_file::read_lines, data_structs::{Coord, Grid, MinPriorityQueue}};
 
 pub fn part1(input_file_path: &str) {
