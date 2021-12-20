@@ -2,10 +2,16 @@ use std::hash::Hash;
 
 use priority_queue::PriorityQueue;
 
-#[derive(Clone, Eq, Hash, PartialEq)]
+#[derive(Clone, Eq, Hash, PartialEq, Debug, PartialOrd, Ord)]
 pub struct Coord {
     pub x: usize,
     pub y: usize
+}
+
+#[derive(Clone, Eq, Hash, PartialEq, Debug, PartialOrd, Ord)]
+pub struct SignedCoord {
+    pub x: isize,
+    pub y: isize
 }
 
 #[derive(Clone)]
