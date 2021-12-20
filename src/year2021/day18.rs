@@ -15,6 +15,21 @@ pub fn part1(input_file_path: &str) {
 pub fn part2(input_file_path: &str) {
   let lines = read_lines(input_file_path);
   let snail_nums = parse_lines(&lines);
+  let mut best_magnitude = 0;
+  for i in 0..snail_nums.len() {
+    for j in 0..snail_nums.len() {
+      if i != j {
+        let num1 = &snail_nums[i];
+        let num2 = &snail_nums[j];
+        let total = add_snailfish_numbers(num1, num2);
+        let mag = magnitude(&total);
+        if mag > best_magnitude {
+          best_magnitude = mag
+        }
+      }
+    }
+  }
+  println!("{}", best_magnitude);
 }
 
 fn parse_lines(lines: &Vec<String>) -> Vec<Vec<SnailfishToken>> {
@@ -70,7 +85,8 @@ fn add_snailfish_numbers(num1: &Vec<SnailfishToken>, num2: &Vec<SnailfishToken>)
     modified = false;
     let (exploded, explode_modified) = explode(&number);
     number = exploded;
-    if explode_modified {
+    modified |= explode_modified;
+    if modified {
       continue;
     }
     let (splitted, split_modified) = split(&number);
@@ -86,11 +102,12 @@ fn explode(num: &Vec<SnailfishToken>) -> (Vec<SnailfishToken>, bool) {
   let mut i = 0;
   while i < num.len() {
     let token = &num[i];
-    if token.nest_level == 4 {
+    if !modified && token.nest_level > 4 {
       if i > 0 {
-        new_num[i-1].value += token.value;
+        let last_index = new_num.len()-1;
+        new_num[last_index].value += token.value;
       }
-      new_num.push(SnailfishToken{value: 0, nest_level: 3});
+      new_num.push(SnailfishToken{value: 0, nest_level: token.nest_level-1});
       if i < num.len() - 2 {
         new_num.push(
           SnailfishToken{
@@ -100,7 +117,7 @@ fn explode(num: &Vec<SnailfishToken>) -> (Vec<SnailfishToken>, bool) {
         );
       }
       modified = true;
-      i += 1;
+      i += 2;
     } else {
       new_num.push(token.clone());
     }
@@ -115,7 +132,7 @@ fn split(num: &Vec<SnailfishToken>) -> (Vec<SnailfishToken>, bool) {
   let mut i = 0;
   while i < num.len() {
     let token = &num[i];
-    if token.value > 9 {
+    if !modified && token.value > 9 {
       modified = true;
       new_num.push(SnailfishToken{value: token.value.div_floor(&2), nest_level: token.nest_level+1});
       new_num.push(SnailfishToken{value: token.value.div_ceil(&2), nest_level: token.nest_level+1});

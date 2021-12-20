@@ -55,7 +55,7 @@ fn bin_to_dec(binary: &[bool]) -> u64 {
 fn parse_packets(mut binary: &[bool], amount: Option<usize>) -> (Vec<Packet>, usize) {
     let mut packets = Vec::<Packet>::new();
     let mut end_index = 0;
-    while binary.len() > 4 { // if all bits left are 0 quit
+    while binary.len() > 4 {
         match amount {
             Some(max) => if packets.len() == max { break; },
             None => ()
