@@ -1,4 +1,7 @@
-use crate::{input_file::read_all_to_string};
+use crate::{
+    input_file::read_all_to_string,
+    binary::bin_to_dec
+};
 
 pub fn part1(input_file_path: &str) {
     let input = read_all_to_string(input_file_path);
@@ -38,18 +41,6 @@ fn to_binary(hex: &str) -> Vec<bool> {
             _ => panic!("Invalid hex character")
         }
     }).flatten().collect()
-}
-
-fn bin_to_dec(binary: &[bool]) -> u64 {
-    let mut exp = 2u64.pow(binary.len() as u32 - 1);
-    let mut total = 0;
-    for bit in binary {
-        if *bit {
-            total += exp;
-        }
-        exp /= 2;
-    }
-    total
 }
 
 fn parse_packets(mut binary: &[bool], amount: Option<usize>) -> (Vec<Packet>, usize) {

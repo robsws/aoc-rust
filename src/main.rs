@@ -3,6 +3,7 @@ use std::env;
 mod year2015; mod year2021;
 mod input_file;
 mod data_structs;
+mod binary;
 
 fn main() {
     // Collect command line arguments
