@@ -1,4 +1,4 @@
-use std::{collections::HashSet, ops::Add};
+use std::{collections::HashSet, ops::Add, iter::FromIterator};
 
 use crate::{
   input_file::read_lines,
@@ -9,20 +9,28 @@ use crate::{
 pub fn part1(input_file_path: &str) {
   let lines = read_lines(input_file_path);
   let (enhancer, mut lit_pixels) = parse_lines(&lines);
-  let mut top_left = SignedCoord{x: -1, y: -1};
-  let mut bottom_right = SignedCoord{x: lines[2].len() as isize, y: lines.len() as isize};
+  let top_left = SignedCoord{x: -10, y: -10};
+  let bottom_right = SignedCoord{x: (lines[2].len()+9) as isize, y: (lines.len()+9) as isize};
   for _ in 0..2 {
     lit_pixels = enhance(lit_pixels, &enhancer, &top_left, &bottom_right);
     print_lit_pixels(&lit_pixels, &top_left, &bottom_right);
-    top_left.x -= 5;
-    top_left.y -= 5;
-    bottom_right.x += 5;
-    bottom_right.y += 5;
   }
-  println!("{}", lit_pixels.len());
+  println!("{}", lit_pixels.iter().filter(|p| p.x != top_left.x && p.x != bottom_right.x).count());
 }
 
 pub fn part2(input_file_path: &str) {
+  let lines = read_lines(input_file_path);
+  let (enhancer, mut lit_pixels) = parse_lines(&lines);
+  let top_left = SignedCoord{x: -53, y: -53};
+  let bottom_right = SignedCoord{x: (lines[2].len()+52) as isize, y: (lines.len()+52) as isize};
+  for i in 0..50 {
+    lit_pixels = enhance(lit_pixels, &enhancer, &top_left, &bottom_right);
+    if i % 2 == 1 {
+      lit_pixels = HashSet::from_iter(lit_pixels.into_iter().filter(|p| p.x != top_left.x && p.x != bottom_right.x));
+    }
+    // print_lit_pixels(&lit_pixels, &top_left, &bottom_right);
+  }
+  println!("{}", lit_pixels.iter().filter(|p| p.x != top_left.x && p.x != bottom_right.x).count());
 }
 
 fn parse_lines(lines: &Vec<String>) -> (Vec<bool>, HashSet<SignedCoord>) {
