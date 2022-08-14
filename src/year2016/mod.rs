@@ -17,7 +17,7 @@ pub fn solve(day: u8, part: u8, input_file_path: &str) {
         (6, 1) => println!("Not yet implemented"), //day6::part1(input_file_path),
         (6, 2) => println!("Not yet implemented"), //day6::part2(input_file_path),
         (7, 1) => day7::part1(input_file_path),
-        (7, 2) => println!("Not yet implemented"), //day7::part2(input_file_path),
+        (7, 2) => day7::part2(input_file_path),
         (8, 1) => println!("Not yet implemented"), //day8::part1(input_file_path),
         (8, 2) => println!("Not yet implemented"), //day8::part2(input_file_path),
         (9, 1) => println!("Not yet implemented"), //day9::part1(input_file_path),
