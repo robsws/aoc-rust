@@ -1,5 +1,3 @@
-use num::Integer;
-
 use crate::input_file::read_lines;
 
 pub fn part1(input_file_path: &str) {
@@ -134,8 +132,8 @@ fn split(num: &Vec<SnailfishToken>) -> (Vec<SnailfishToken>, bool) {
     let token = &num[i];
     if !modified && token.value > 9 {
       modified = true;
-      new_num.push(SnailfishToken{value: token.value.div_floor(&2), nest_level: token.nest_level+1});
-      new_num.push(SnailfishToken{value: token.value.div_ceil(&2), nest_level: token.nest_level+1});
+      new_num.push(SnailfishToken{value: num::integer::div_floor(token.value, 2), nest_level: token.nest_level+1});
+      new_num.push(SnailfishToken{value: num::integer::div_ceil(token.value, 2), nest_level: token.nest_level+1});
     } else {
       new_num.push(token.clone());
     }
