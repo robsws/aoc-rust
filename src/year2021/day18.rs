@@ -75,7 +75,7 @@ struct SnailfishToken {
 fn add_snailfish_numbers(num1: &Vec<SnailfishToken>, num2: &Vec<SnailfishToken>) -> Vec<SnailfishToken> {
   let mut number = num1.clone();
   number.extend(num2.clone());
-  for mut token in &mut number {
+  for token in &mut number {
     token.nest_level += 1;
   }
   let mut modified = true;

@@ -103,7 +103,8 @@ impl<'a, T: Clone> Grid<T> {
 
 // The lifetime specifier here makes sure that
 // the elements reference living inside the iterator
-// does not outlive the grid.
+// does not outlive the grid. This iterator returns
+// references and hence does not consume the grid.
 impl<'a, T: Clone> IntoIterator for &'a Grid<T> {
     type Item = &'a T;
     type IntoIter = GridIterator<'a, T>;
