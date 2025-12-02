@@ -1,6 +1,6 @@
 use std::env;
 
-mod year2015; mod year2016; mod year2021; mod year2024;
+mod year2015; mod year2016; mod year2021; mod year2024; mod year2025;
 mod input_file;
 mod data_structs;
 mod binary;
@@ -25,6 +25,7 @@ fn main() {
         2016 => year2016::solve(day, part, input_file_path),
         2021 => year2021::solve(day, part, input_file_path),
         2024 => year2024::solve(day, part, input_file_path),
+        2025 => year2025::solve(day, part, input_file_path),
         _ => {
             eprintln!("Solutions to year {} not yet implemented.", year);
         }
