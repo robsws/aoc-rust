@@ -1,4 +1,4 @@
-mod day7; mod day8; mod day9; mod day10; mod day11;
+mod day7; mod day8; mod day9; mod day10;
 
 /// Dispatch the correct function given the day and part
 /// given.
