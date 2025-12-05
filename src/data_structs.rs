@@ -1,4 +1,6 @@
+use std::fmt::Display;
 use std::hash::Hash;
+use std::cmp;
 
 use priority_queue::PriorityQueue;
 
@@ -170,3 +172,40 @@ impl<T: Hash + Eq> MinPriorityQueue<T> {
     }
 }
 
+#[derive(Clone)]
+pub struct NumRange {
+    pub min: u64,
+    pub max: u64
+}
+
+impl NumRange {
+
+    pub fn includes(&self, val: u64) -> bool {
+        val >= self.min && val <= self.max
+    }
+
+    pub fn overlaps_with(&self, other: &NumRange) -> bool {
+        self.max >= other.min && self.min <= other.max
+    }
+
+    pub fn combine_with(&mut self, other: &NumRange) -> Option<NumRange> {
+        if self.overlaps_with(other) {
+            Some(NumRange {
+                min: (cmp::min(self.min, other.min)),
+                max: (cmp::max(self.max, other.max))
+            })
+        } else {
+            None
+        }
+    }
+
+    pub fn member_count(&self) -> u64 {
+        self.max + 1 - self.min
+    }
+}
+
+impl Display for NumRange {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "NumRange [{} to {}]", self.min, self.max)
+    }
+}

@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 
 use crate::input_file::read_lines;
+use crate::data_structs::NumRange;
 
 pub fn part1(input_file_path: &str) {
     let lines = read_lines(input_file_path);
@@ -54,18 +55,6 @@ fn parse_input(line: &str) -> Vec<NumRange> {
             }
         })
         .collect()
-}
-
-struct NumRange {
-    min: u64,
-    max: u64
-}
-
-impl NumRange {
-
-    pub fn includes(&self, val: u64) -> bool {
-        val >= self.min && val <= self.max
-    }
 }
 
 fn get_max_of_ranges(ranges: &Vec<NumRange>) -> u64 {
