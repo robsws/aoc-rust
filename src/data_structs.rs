@@ -1,6 +1,6 @@
 use std::fmt::Display;
 use std::hash::Hash;
-use std::cmp;
+use std::cmp::{self, max, min};
 
 use priority_queue::PriorityQueue;
 
@@ -8,6 +8,11 @@ use priority_queue::PriorityQueue;
 pub struct Coord {
     pub x: usize,
     pub y: usize
+}
+
+pub fn manhattan_dist(a: &Coord, b: &Coord) -> usize {
+    (max(a.x, b.x) - min(a.x, b.x)) +
+        (max(a.y, b.y) - min(a.y, b.y))
 }
 
 #[derive(Clone, Eq, Hash, PartialEq, Debug, PartialOrd, Ord)]
